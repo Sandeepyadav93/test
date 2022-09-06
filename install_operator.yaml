@@ -2,6 +2,10 @@
   - name: "Start CRC Node and install the operator"
     hosts: all
     tasks:
+      - name: Start CRC node
+        shell: |
+          crc start --log-level debug > crc_start.log
+    
       - name: Install operator
         shell: |
           eval $(crc oc-env)
