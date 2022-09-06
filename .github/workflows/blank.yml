@@ -55,7 +55,7 @@ jobs:
         
         
       # Runs a set of commands using the runners shell
-      - name: Run playbook
+      - name: Start CRC and Install Operators
         run: |
           ls ${{ github.workspace }}
-          ansible-playbook -i inventory ${{ github.workspace }}/install_operator.yaml
+          ansible-playbook -i -vv inventory ${{ github.workspace }}/install_operator.yaml
