@@ -48,13 +48,14 @@ jobs:
           openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name mykey test_crc_instance_github_1 --wait
           floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
           openstack server add floating ip test_crc_instance_github_1 $floating_ip
-          sleep 60
+          sleep 20
           ssh-keyscan -t rsa $floating_ip  >> ~/.ssh/known_hosts
           ssh -i ~/.ssh/id_rsa fedora@$floating_ip hostname
+          echo "$floating_ip ansible_user=fedora" > inventory
         
         
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Run playbook
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          ls ${{ github.workspace }}
+          ansible-playbook -i inventory ${{ github.workspace }}/test.yaml
