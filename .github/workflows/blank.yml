@@ -41,13 +41,16 @@ jobs:
           OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
         run: |
+          ls ~/.ssh/
           ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
+          echo "after"
+          ls ~/.ssh/
           openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
           openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name mykey test_crc_instance_github_1 --wait
           floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
           openstack server add floating ip test_crc_instance_github_1 $floating_ip
-          sleep 20
-          ssh fedora@$floating_ip hostname
+          sleep 60
+          ssh -i ~/.ssh/id_rsa fedora@$floating_ip hostname
         
         
       # Runs a set of commands using the runners shell
