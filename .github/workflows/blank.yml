@@ -40,7 +40,7 @@ jobs:
           OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
         run: |
-          ssh-keygen -t rsa -N ''
+          ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
           openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
           openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} test_crc_instance_github_1 --wait
           floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
