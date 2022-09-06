@@ -44,8 +44,8 @@ jobs:
           ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
           echo "after"
           ls ~/.ssh/id_*
-          openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
-          openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name mykey test_crc_instance_github_1 --wait
+          openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey >/dev/null
+          openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name mykey test_crc_instance_github_1 --wait >/dev/null
           floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
           openstack server add floating ip test_crc_instance_github_1 $floating_ip
           sleep 20
