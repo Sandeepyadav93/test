@@ -2,9 +2,6 @@
   - name: "Start CRC Node and install the operator"
     hosts: all
     tasks:
-      - name: Start CRC node
-        shell: "crc start"
-
       - name: Install operator
         shell: |
           eval $(crc oc-env)
@@ -21,7 +18,7 @@
           make keystone_deploy
           sleep 90 # wait 120 seconds so that keystone service install successfully, will replace with better checks
 
-      - name: Install operator
+      - name: Post tests
         shell: |
           export OS_PROJECT_NAME=admin
           export OS_USERNAME=admin
