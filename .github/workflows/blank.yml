@@ -40,7 +40,7 @@ jobs:
           OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
         run: |
-          openstack token issue         
+          echo $OS_USER_DOMAIN_NAME   
           
 
       # Runs a set of commands using the runners shell
