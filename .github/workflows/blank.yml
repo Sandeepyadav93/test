@@ -58,4 +58,4 @@ jobs:
       - name: Run playbook
         run: |
           ls ${{ github.workspace }}
-          ansible-playbook -i inventory ${{ github.workspace }}/test.yaml
+          ansible-playbook -i inventory ${{ github.workspace }}/install_operator.yaml
