@@ -1,0 +1,18 @@
+---
+  - name: "Start CRC Node"
+    hosts: all
+    tasks:     
+      - name: Start CRC node
+        shell: |
+          set -ex
+          crc start --log-level debug &>> $HOME/crc_start.log
+          echo "======crc start complete======" &>> $HOME/crc_start.log
+          
+      - name: Pre-test to check if oc commands are working
+        shell: |
+          eval $(crc oc-env)
+          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
+          oc whoami
+        register: task_register_var
+        until: task_register_var is not failed
+        retries: 20
