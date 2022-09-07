@@ -4,11 +4,12 @@
     tasks:
       - name: Start CRC node
         shell: |
-          crc start --log-level debug > crc_start.log
+          crc start --log-level debug &>> $HOME/crc_start.log
+          echo "======crc start complete======" &>> $HOME/crc_start.log
     
       - name: Install operator
         shell: |
-          bash $HOME/install_operator.sh
+          bash $HOME/install_operator.sh &>> $HOME/install_operator.log
 
       - name: Post tests
         shell: |
