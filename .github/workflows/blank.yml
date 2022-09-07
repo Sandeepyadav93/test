@@ -48,7 +48,7 @@ jobs:
           openstack server add floating ip test_crc_instance_github_1 $floating_ip
           sleep 20
           ssh-keyscan -t rsa $floating_ip  >> ~/.ssh/known_hosts
-          scp ${{ github.workspace }}/install_operator.sh fedora@$floating_ip:/home/
+          scp ${{ github.workspace }}/install_operator.sh fedora@$floating_ip:~
           echo "$floating_ip ansible_user=fedora" > inventory
         
         
