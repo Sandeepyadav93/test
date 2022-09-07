@@ -1,6 +1,0 @@
----
-  - name: "Start CRC Node and install the operator"
-    hosts: all
-    tasks:
-      - name: Just a test
-        shell: "touch test317.txt"
