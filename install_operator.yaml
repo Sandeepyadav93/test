@@ -1,11 +1,7 @@
 ---
   - name: "Start CRC Node and install the operator"
     hosts: all
-    tasks:
-      - name: Workaround for hanging ssh
-        shell: |
-          echo "ServerAliveInterval 20" > ~/.ssh/config
-        
+    tasks:     
       - name: Start CRC node
         shell: |
           crc start --log-level debug &>> $HOME/crc_start.log
