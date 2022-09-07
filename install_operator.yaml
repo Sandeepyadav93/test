@@ -8,19 +8,7 @@
     
       - name: Install operator
         shell: |
-          eval $(crc oc-env)
-          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
-          cd $HOME/install_yamls
-          make crc_storage
-          make mariadb
-          sleep 30 # wait 30 seconds so that operator install completes successfully, will replace with better check
-          # KEYSTONE_IMG=quay.io/mschuppe/keystone-operator-index:v0.0.34 KEYSTONE_REPO=https://github.com/stuggi/keystone-operator.git KEYSTONE_BRANCH=rework make keystone
-          make keystone
-          sleep 30 # wait 30 seconds so that operator install completes successfully, will replace with better check
-          make mariadb_deploy
-          sleep 60 # wait 60 seconds so that mariadb service install successfully, will replace with better checks
-          make keystone_deploy
-          sleep 90 # wait 120 seconds so that keystone service install successfully, will replace with better checks
+          bash $HOME/install_operator.sh
 
       - name: Post tests
         shell: |
