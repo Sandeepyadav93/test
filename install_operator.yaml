@@ -5,7 +5,14 @@
       - name: Start CRC node
         shell: |
           crc start --log-level debug &>> $HOME/crc_start.log
+          sleep 30
           echo "======crc start complete======" &>> $HOME/crc_start.log
+          
+      - name: Pre-test to check if oc commands are working
+        shell: |
+          eval $(crc oc-env)
+          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
+          oc whoami
     
       - name: Install operator
         shell: |
