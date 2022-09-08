@@ -1,8 +1,15 @@
 ---
-  - name: "Start CRC Node and install the operator"
+  - name: "Setup CRC Storage, install the operator and Post tests"
     hosts: all
     tasks:     
-      - name: Install operator
+      - name: CRC storage setup
+        shell: |
+          bash $HOME/setup_crc_storage.sh &>> $HOME/setup_crc_storage.log
+        register: task_register_var
+        until: task_register_var is not failed
+        retries: 3
+
+      - name: Install the operators
         shell: |
           bash $HOME/install_operator.sh &>> $HOME/install_operator.log
 
