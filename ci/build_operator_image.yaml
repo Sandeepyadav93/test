@@ -1,0 +1,18 @@
+---
+  - hosts: localhost
+    tasks:
+      - name: Install required packages to build containers
+        become: true
+        package:
+          name:
+            - gcc
+            - podman
+
+      - name: Clone keystone-operator
+        git:
+          repo: 'https://github.com/openstack-k8s-operators/keystone-operator.git'
+          dest: /home/fedora/keystone-operator
+
+      - name: Create operator images
+        shell: |
+          bash $HOME/build_operator_image.sh &> build_operator_image.log

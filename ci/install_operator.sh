@@ -7,7 +7,8 @@ echo "make mariadb"
 make mariadb
 sleep 30
 echo "make keystone"
-make keystone
+#make keystone
+make keystone KEYSTONE_IMG=default-route-openshift-image-registry.apps-crc.testing/openstack/keystone-operator-index:v0.0.1
 sleep 30
 echo "make mariadb_deploy"
 make mariadb_deploy
