@@ -48,7 +48,7 @@ jobs:
           openstack server add floating ip github_instance_${GITHUB_SHA:0:7} $floating_ip
           sleep 20
           ssh-keyscan -t rsa $floating_ip  >> ~/.ssh/known_hosts
-          scp ${{ github.workspace }}/install_operator.sh fedora@$floating_ip:~
+          scp ${{ github.workspace }}/ci/install_operator.sh fedora@$floating_ip:~
           echo "$floating_ip ansible_user=fedora" > inventory
           ssh fedora@$floating_ip echo "ServerAliveInterval 20" >> ~/.ssh/config
           ssh fedora@$floating_ip echo "ServerAliveCountMax 180" >> ~/.ssh/config
@@ -60,4 +60,4 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Install Operators
         run: |
-          ansible-playbook -i inventory ${{ github.workspace }}/install_operator.yaml -vv
+          ansible-playbook -i inventory ${{ github.workspace }}/ci/install_operator.yaml -vv
