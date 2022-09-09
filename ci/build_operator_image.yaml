@@ -18,4 +18,4 @@
           bash $HOME/build_operator_image.sh &> build_operator_image.log
         register: task_register_var
         until: task_register_var is not failed
-        retries: 3
+        retries: 5
