@@ -57,9 +57,9 @@ jobs:
         run: |
           ansible-playbook -i inventory ${{ github.workspace }}/ci/start_crc.yaml -vv
         
-      - name: Create Operator Image
+      - name: Build Operator Image
         run: |
-          ansible-playbook -i inventory ${{ github.workspace }}/ci/install_operator.yaml -vv
+          ansible-playbook -i inventory ${{ github.workspace }}/ci/build_operator_image.yaml -vv
 
       - name: Install Operators
         run: |
