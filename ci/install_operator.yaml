@@ -12,6 +12,9 @@
       - name: Install the operators
         shell: |
           bash $HOME/install_operator.sh &>> $HOME/install_operator.log
+        register: task_register_var
+        until: task_register_var is not failed
+        retries: 3          
 
       - name: Post tests
         shell: |
