@@ -7,14 +7,14 @@
           bash $HOME/setup_crc_storage.sh &>> $HOME/setup_crc_storage.log
         register: task_register_var
         until: task_register_var is not failed
-        retries: 3
+        retries: 5
 
       - name: Install the operators
         shell: |
           bash $HOME/install_operator.sh &>> $HOME/install_operator.log
         register: task_register_var
         until: task_register_var is not failed
-        retries: 3          
+        retries: 5
 
       - name: Post tests
         shell: |
