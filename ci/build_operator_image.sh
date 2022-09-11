@@ -3,7 +3,6 @@ set -ex
 eval $(crc oc-env)
 oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
 cd $HOME/keystone-operator
-oc new-project openstack
 OS_REGISTRY=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
 oc registry login --skip-check ${OS_REGISTRY}
 #workaround to avoid "Error: error creating build container: short-name resolution enforced but cannot prompt without a TTY"
