@@ -6,6 +6,7 @@
         shell: |
           set -ex
           crc start --log-level debug &>> $HOME/crc_start.log
+          sleep 30
           echo "======crc start complete======" &>> $HOME/crc_start.log
           
       - name: Pre-test to check if oc commands are working

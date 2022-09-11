@@ -30,3 +30,14 @@
         register: task_register_var
         until: task_register_var is not failed
         retries: 5
+
+      - name: Post test to confirm oc images are build successfully
+        shell: |
+          set -ex
+          eval $(crc oc-env)
+          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
+          oc get is
+          podman pull default-route-openshift-image-registry.apps-crc.testing/openstack/keystone-operator-index:v0.0.1
+        register: task_register_var
+        until: task_register_var is not failed
+        retries: 5

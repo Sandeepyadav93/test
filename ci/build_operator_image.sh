@@ -9,4 +9,3 @@ oc registry login --skip-check ${OS_REGISTRY}
 podman pull docker.io/library/golang:1.18
 IMAGE_TAG_BASE=${OS_REGISTRY}/$(oc project -q)/keystone-operator VERSION=0.0.1 IMG=$IMAGE_TAG_BASE:v$VERSION make manifests build docker-build docker-push bundle bundle-build bundle-push catalog-build catalog-push
 oc set image-lookup --all
-oc get is
