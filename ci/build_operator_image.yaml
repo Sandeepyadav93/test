@@ -13,6 +13,17 @@
           repo: 'https://github.com/openstack-k8s-operators/keystone-operator.git'
           dest: /home/fedora/keystone-operator
 
+      - name: Create openstack namespace
+        shell: |
+          set -ex
+          eval $(crc oc-env)
+          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
+          cd $HOME/install_yamls/
+          make namespace
+        register: task_register_var
+        until: task_register_var is not failed
+        retries: 5          
+          
       - name: Create operator images
         shell: |
           bash $HOME/build_operator_image.sh &> build_operator_image.log
