@@ -31,7 +31,7 @@
         until: task_register_var is not failed
         retries: 5
 
-      - name: Post test to confirm oc images are build successfully
+      - name: Post tests to confirm operator images are pushed successfully on OC registry
         shell: |
           set -ex
           eval $(crc oc-env)
