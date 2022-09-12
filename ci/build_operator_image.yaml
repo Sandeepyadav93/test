@@ -26,18 +26,7 @@
           
       - name: Create operator images
         shell: |
-          bash $HOME/build_operator_image.sh &>> build_operator_image.log
-        register: task_register_var
-        until: task_register_var is not failed
-        retries: 5
-
-      - name: Post tests to confirm operator images are pushed successfully on OC registry
-        shell: |
-          set -ex
-          eval $(crc oc-env)
-          oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
-          oc get is
-          podman pull default-route-openshift-image-registry.apps-crc.testing/openstack/keystone-operator-index:v0.0.1
+          bash $HOME/build_operator_image.sh keystone-operator &>> build_operator_image.log
         register: task_register_var
         until: task_register_var is not failed
         retries: 5

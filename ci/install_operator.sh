@@ -2,6 +2,10 @@
 set -ex
 eval $(crc oc-env)
 oc login -u kubeadmin -p 12345678 https://api.crc.testing:6443
+OS_REGISTRY=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+oc registry login --skip-check ${OS_REGISTRY}
+oc get is
+oc set image-lookup --all
 cd $HOME/install_yamls
 echo "make mariadb"
 make mariadb
