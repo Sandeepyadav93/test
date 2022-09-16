@@ -11,7 +11,7 @@
 
       - name: Install the operators
         shell: |
-          bash $HOME/install_operator_with_hash.sh keystone-operator quay.io/sandyada 491c5a3c564ce75f4962b1aae89cc11a530f7156 &>> $HOME/install_operator.log
+          bash $HOME/install_operator_with_hash.sh keystone-operator quay.io/sandyada 5b3b01237d356b514b3f82360effde029189e123 &>> $HOME/install_operator.log
         register: task_register_var
         until: task_register_var is not failed
         retries: 5
