@@ -1,6 +1,6 @@
 ---
   - name: "Setup CRC Storage, install the operator and Post tests"
-    hosts: all
+    hosts: localhost
     tasks:     
       - name: CRC storage setup
         shell: |
