@@ -41,7 +41,7 @@ jobs:
         run: |
           ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
           openstack keypair create --public-key ~/.ssh/id_rsa.pub key_${GITHUB_SHA:0:7} >/dev/null
-          openstack server create --image ${{ secrets.SNO_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name key_${GITHUB_SHA:0:7} github_instance_${GITHUB_SHA:0:7} --wait >/dev/null
+          openstack server create --image ${{ secrets.SNO_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.SNO_PRIVATE_NETWORK }} --security-group ${{ secrets.SG_MASTER }} --security-group ${{ secrets.SG_WORKER }} --key-name key_${GITHUB_SHA:0:7} github_instance_${GITHUB_SHA:0:7} --wait >/dev/null
           floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
           openstack server add floating ip github_instance_${GITHUB_SHA:0:7} $floating_ip
           echo "$floating_ip api.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
