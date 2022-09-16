@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  SNO:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: Install OpenStack Client
+        run: |
+          sudo apt install python3-dev python3-pip
+          sudo pip3 install --upgrade pip
+          sudo pip3 install python-openstackclient
+          
+      - name: Create an OpenStack Instance
+        shell: bash
+        env:
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}
+          OS_PROJECT_NAME: ${{ secrets.OS_PROJECT_NAME }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
+          OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
+        run: |
+          ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
+          openstack keypair create --public-key ~/.ssh/id_rsa.pub key_${GITHUB_SHA:0:7} >/dev/null
+          openstack server create --image ${{ secrets.CRC_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.PRIVATE_NETWORK }} --security-group ${{ secrets.SECURITY_GROUP }} --key-name key_${GITHUB_SHA:0:7} github_instance_${GITHUB_SHA:0:7} --wait >/dev/null
+          floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
+          openstack server add floating ip github_instance_${GITHUB_SHA:0:7} $floating_ip
+          echo "$floating_ip api.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
+          echo "$floating_ip console-openshift-console.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
+          echo "$floating_ip integrated-oauth-server-openshift-authentication.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
+          echo "$floating_ip oauth-openshift.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
+          echo "$floating_ip prometheus-k8s-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
+          echo "$floating_ip grafana-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null          
+          
+      - name: Wait for 5 mins for cluster to get stable
+        run: |
+          sleep 300
+        
+      - name: Try to login as kubeadmin
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 10     
+          command: oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443
+
+      - name: Install operator
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 5    
+          command: ansible-playbook ${{ github.workspace }}/ci/install_operator.yaml -vv
