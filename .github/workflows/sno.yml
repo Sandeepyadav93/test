@@ -60,11 +60,14 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 10     
-          command: oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443
+          command: |
+            oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443
+            oc whoami
 
       - name: Install operator
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
           max_attempts: 5    
-          command: ansible-playbook ${{ github.workspace }}/ci/install_operator.yaml -vv
+          command: |
+            ansible-playbook ${{ github.workspace }}/ci/install_operator.yaml -vv
