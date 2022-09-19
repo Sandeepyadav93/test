@@ -49,10 +49,10 @@ jobs:
           echo "$floating_ip prometheus-k8s-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip grafana-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null          
           
-      - name: Wait for 5 mins for cluster to get stable
+      - name: Wait for 4 mins for cluster to get stable
         run: |
           sudo cat /etc/hosts
-          sleep 300
+          sleep 240
           
         
       - name: Try to login as kubeadmin
