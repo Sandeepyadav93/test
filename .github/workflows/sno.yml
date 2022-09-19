@@ -28,7 +28,12 @@ jobs:
           sudo apt install python3-dev python3-pip
           sudo pip3 install --upgrade pip
           sudo pip3 install python-openstackclient
-          
+
+      - name: Create an OpenStack Instance
+        shell: bash
+        run: |
+          openstack --help | grep -i stack
+
       - name: Create an OpenStack Instance
         shell: bash
         env:
