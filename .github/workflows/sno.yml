@@ -45,7 +45,7 @@ jobs:
           OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
         run: |
-          heat stack create -t {{ github.workspace }}/.github/sno_heat_stack.yaml sandeep_test_stack
+          heat stack-create -f {{ github.workspace }}/.github/sno_heat_stack.yaml sandeep_test_stack
           floating_ip=$(openstack stack output show sandeep-test-stack heat_server_public_ip -c output_value -f value)
           echo "$floating_ip api.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip console-openshift-console.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
