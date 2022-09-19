@@ -61,7 +61,7 @@ jobs:
           timeout_minutes: 10
           max_attempts: 10     
           command: |
-            oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443
+            oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443 --insecure-skip-tls-verify
             oc whoami
 
       - name: Install operators
