@@ -44,6 +44,8 @@ resources:
       fixed_ips:
         - subnet_id: { get_resource: heat_network_subnet }
           ip_address: 10.0.129.71
+      security_groups:
+        - shiftstack-gcftr-master          
   heat_server:
     type: OS::Nova::Server
     properties:
