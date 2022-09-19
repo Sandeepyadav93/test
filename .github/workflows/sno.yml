@@ -5,7 +5,7 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  pull_request:
+  push:
     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -39,11 +39,8 @@ jobs:
           OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
         run: |
-          ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
-          openstack keypair create --public-key ~/.ssh/id_rsa.pub key_${GITHUB_SHA:0:7} >/dev/null
-          openstack server create --image ${{ secrets.SNO_SNAPSHOT_NAME }} --flavor ${{ secrets.FLAVOR }} --network ${{ secrets.SNO_PRIVATE_NETWORK }} --security-group ${{ secrets.SG_MASTER }} --security-group ${{ secrets.SG_WORKER }} --key-name key_${GITHUB_SHA:0:7} shiftstack-wcqsr-master-0 --wait >/dev/null
-          floating_ip=$(openstack floating ip create ${{ secrets.FLOATING_NETWORK }} -c floating_ip_address -f value)
-          openstack server add floating ip shiftstack-wcqsr-master-0 $floating_ip
+          openstack stack create -t {{ github.workspace }}/.github/sno_heat_stack.yaml sandeep_test_stack
+          floating_ip=$(openstack stack output show sandeep-test-stack heat_server_public_ip -c output_value -f value)
           echo "$floating_ip api.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip console-openshift-console.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip integrated-oauth-server-openshift-authentication.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
