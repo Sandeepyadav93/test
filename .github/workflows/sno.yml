@@ -64,7 +64,7 @@ jobs:
             oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443
             oc whoami
 
-      - name: Install operator
+      - name: Install operators
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
