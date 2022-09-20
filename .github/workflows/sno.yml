@@ -48,11 +48,11 @@ jobs:
           echo "$floating_ip oauth-openshift.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip prometheus-k8s-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           echo "$floating_ip grafana-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null          
+          echo "$floating_ip keystone-public-openstack.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           
-      - name: Wait for 4 mins for cluster to get stable
+      - name: Wait for 3 mins for cluster to get stable
         run: |
-          sudo cat /etc/hosts
-          sleep 240
+          sleep 180
           
         
       - name: Try to login as kubeadmin
@@ -63,6 +63,7 @@ jobs:
           command: |
             oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443 --insecure-skip-tls-verify
             oc whoami
+            for i in `oc get csr |grep Pending |awk '{print $1}'`; do oc adm certificate approve $i; done
 
       - name: Install operators
         uses: nick-fields/retry@v2
@@ -77,10 +78,23 @@ jobs:
             make crc_storage
             sleep 10
             make mariadb
-            sleep 30
+            sleep 45
             make keystone
-            sleep 30
+            sleep 45
             make mariadb_deploy
             sleep 60
             make keystone_deploy
             sleep 90
+            
+            
+      - name: Post tests to confirm operators are working
+        run: |
+          oc exec -it  pod/mariadb-openstack -- mysql -uroot -p12345678 -e "show databases;"
+          mkdir -p ~/.config/openstack
+          cat > ~/.config/openstack/clouds.yaml << EOF
+          $(oc get cm openstack-config -o json | jq -r '.data["clouds.yaml"]')
+          EOF
+          export OS_CLOUD=default
+          export OS_PASSWORD=12345678
+          openstack token issue
+            
