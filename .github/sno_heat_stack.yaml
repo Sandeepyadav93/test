@@ -10,7 +10,7 @@ parameters:
   image:
     type: string
     description: SNO Snapshot
-    default: 	sno_snapshot
+    default: 	SNO_shiftstack-9xchk-master-0_10.0.129.13
     constraints:
       - custom_constraint: glance.image
 
