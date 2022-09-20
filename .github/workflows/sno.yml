@@ -63,7 +63,6 @@ jobs:
           command: |
             oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443 --insecure-skip-tls-verify
             oc whoami
-            for i in `oc get csr |grep Pending |awk '{print $1}'`; do oc adm certificate approve $i; done
 
       - name: Install operators
         uses: nick-fields/retry@v2
@@ -89,6 +88,7 @@ jobs:
             
       - name: Post tests to confirm operators are working
         run: |
+          for i in `oc get csr |grep Pending |awk '{print $1}'`; do oc adm certificate approve $i; done
           oc exec -it  pod/mariadb-openstack -- mysql -uroot -p12345678 -e "show databases;"
           mkdir -p ~/.config/openstack
           cat > ~/.config/openstack/clouds.yaml << EOF
