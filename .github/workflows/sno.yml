@@ -75,11 +75,11 @@ jobs:
             git clone https://github.com/openstack-k8s-operators/install_yamls.git
             cd $HOME/install_yamls
             make crc_storage
-            sleep 10
+            sleep 20
             make mariadb
-            sleep 45
+            sleep 60
             make keystone
-            sleep 45
+            sleep 60
             make mariadb_deploy
             sleep 60
             make keystone_deploy
