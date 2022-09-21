@@ -30,7 +30,7 @@ jobs:
           sudo pip3 install python-openstackclient
           sudo pip3 install python-heatclient
 
-      - name: Create an OpenStack Instance
+      - name: Create a Heat Stack with Pre-deployed OCP SNO Environment
         shell: bash
         env:
           OS_USERNAME: ${{ secrets.OS_USERNAME }}
@@ -50,7 +50,7 @@ jobs:
           echo "$floating_ip grafana-openshift-monitoring.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null          
           echo "$floating_ip keystone-public-openstack.apps.${{ secrets.SNO_DOMAIN_NAME }}" | sudo tee -a /etc/hosts > /dev/null
           
-      - name: Wait for 3 mins for cluster to get stable
+      - name: Wait for 3 mins for OCP cluster to get stable
         run: |
           sleep 180
           
@@ -90,4 +90,17 @@ jobs:
             EOF
             export OS_CLOUD=default
             export OS_PASSWORD=12345678
-            openstack token issue          
+            openstack token issue
+            
+      - name: Delete the OpenShift SNO Instance
+        if: always()
+        shell: bash
+        env:
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}
+          OS_PROJECT_NAME: ${{ secrets.OS_PROJECT_NAME }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_PROJECT_DOMAIN_ID: ${{ secrets.OS_PROJECT_DOMAIN_ID }}
+          OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}                              
+        run: |
+          openstack stack delete sandeep_test_stack --wait
