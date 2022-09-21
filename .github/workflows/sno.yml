@@ -68,7 +68,8 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
-          max_attempts: 5    
+          max_attempts: 5
+          shell: bash
           command: |
             cd $HOME
             rm -rf install_yamls
