@@ -11,7 +11,7 @@ make mariadb
 sleep 90
 make keystone
 sleep 90
-make mariadb_deploy
+make mariadb_deploy SHELL=/bin/bash
 sleep 90
-make keystone_deploy
+make keystone_deploy SHELL=/bin/bash
 sleep 90
