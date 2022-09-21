@@ -68,20 +68,26 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
-          max_attempts: 5
+          max_attempts: 3
           shell: bash
           command: |
+            oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443 --insecure-skip-tls-verify
             bash "${GITHUB_WORKSPACE}"/.github/install_operator_with_hash.sh keystone-operator quay.io/sandyada e55e2c3a49f857041167493db7afd82b80dfdb6a
             
       - name: Post tests to confirm operators are working
-        run: |
-          for i in `oc get csr |grep Pending |awk '{print $1}'`; do oc adm certificate approve $i; done
-          oc exec -it  pod/mariadb-openstack -- mysql -uroot -p12345678 -e "show databases;"
-          mkdir -p ~/.config/openstack
-          cat > ~/.config/openstack/clouds.yaml << EOF
-          $(oc get cm openstack-config -o json | jq -r '.data["clouds.yaml"]')
-          EOF
-          export OS_CLOUD=default
-          export OS_PASSWORD=12345678
-          openstack token issue
-            
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          shell: bash
+          command: |
+            oc login -u kubeadmin -p ${{ secrets.KUBEADMIN_PASSWORD }} https://api.shiftstack.standalone:6443 --insecure-skip-tls-verify
+            for i in `oc get csr |grep Pending |awk '{print $1}'`; do oc adm certificate approve $i; done
+            oc exec -it  pod/mariadb-openstack -- mysql -uroot -p12345678 -e "show databases;"
+            mkdir -p ~/.config/openstack
+            cat > ~/.config/openstack/clouds.yaml << EOF
+            $(oc get cm openstack-config -o json | jq -r '.data["clouds.yaml"]')
+            EOF
+            export OS_CLOUD=default
+            export OS_PASSWORD=12345678
+            openstack token issue          
